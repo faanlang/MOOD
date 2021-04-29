@@ -4,6 +4,7 @@ Created on Wed Apr 21 13:55:41 2021
 
 @author: swlon
 """
+import math
 import numpy as np 
 import matplotlib.pyplot as plt
 from numpy import random
@@ -70,6 +71,7 @@ def differential_evolution(config):
             sub_smaller = True
         # if this is not the case, take a rdm subset of the PSet
         else:
+            sub_pop_size = config.subXpop
             sub_smaller = False
             sub_parent = np.zeros((sub_pop_size,Nvar))
             j_sub_parent = np.zeros((sub_pop_size,Nobj))
@@ -80,7 +82,7 @@ def differential_evolution(config):
                 j_sub_parent[c] = PFront[numbers[c]]
         
         
-        
+        print(sub_pop_size)
         mutant   = np.zeros((sub_pop_size, Nvar))
         child = np.zeros((sub_pop_size, Nvar))
         j_child = np.zeros((sub_pop_size, Nobj))
@@ -124,40 +126,59 @@ def differential_evolution(config):
     #         SubParent(subxpop,:) = Child(subxpop,:);
     #         JxSubParent(subxpop,:) = JxChild(subxpop,:);
     #     end
-                
-                
-        #add all childs to population and run dominance filter
-        # PFront8 =np.array(PFront)
-        # PSet8 =np.array(PSet)
-        # j_child8 =np.array(j_child)
-        # child8 =np.array(child)
-        
         
         big_front = np.concatenate((PFront, j_child))
         big_set = np.concatenate((PSet, child))
         
         #plot before update
-        plt.figure()
-        plt.scatter(PFront[:,0],PFront[:,1],color = 'darkorange')
+        #plt.figure()
+        #plt.scatter(PFront[:,0],PFront[:,1],color = 'darkorange')
     
     #update PFront, Pset
         PFront, PSet = dominance_filter(big_front,big_set,x)
         
         #plot after update
-        plt.scatter(PFront[:,0],PFront[:,1])
-        plt.ylim(0,20)
-        plt.xlim(0,0.2)
+        #plt.scatter(PFront[:,0],PFront[:,1])
+        #plt.ylim(0,20)
+        #plt.xlim(0,0.2)
         
+        #plt.show()
+        #print(len(PFront))
+        
+        
+        
+    
+    # Level Diagnostics
+    # plot per objective 
+    norm = np.zeros((len(PFront)))
+    min_pf = np.amin(PFront, axis=0)
+    max_pf = np.amax(PFront, axis=0)
+    
+    for solution in range(0,len(PFront)):
+        quadratic = 0
+        for objective in range(0,Nobj):
+            normalised_distance = (PFront[solution,objective]-min_pf[objective])\
+                                    /(max_pf[objective]-min_pf[objective])
+            quadratic = quadratic + (normalised_distance)**2
+        norm[solution] = math.sqrt(quadratic)
+    
+    for plotted_objective in range(0,Nobj):
+        plt.figure()
+        plt.scatter(PFront[:,plotted_objective], norm)
+        plt.xlabel(r'$J_{}$'.format(plotted_objective+1)+r'$(\theta$)')
+        plt.ylabel(r'$||\hat{J}(\theta)||$')
+        plt.savefig('Level_diagram_J'+str(plotted_objective+1)+ '.pdf')    
         plt.show()
-        print(len(PFront))
-        
-        
-        
     
-    
-    
-    
-    
+    plt.figure
+    plt.scatter(PFront[:,0],PFront[:,1])
+    plt.ylim(0,20)
+    plt.xlim(0,0.2)
+    plt.xlabel(r'$J_{1}(\theta)$')
+    plt.ylabel(r'$J_{2}(\theta)$')
+    plt.savefig('Pareto_Front'+ '.pdf')    
+    plt.show()
+    print(len(PFront))
     
     
     #print(parent)
