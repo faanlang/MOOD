@@ -120,11 +120,19 @@ Vfactor = (Vcell*Ncells/Vculture)
 
 
 """)
-    r.KmCCgC = variables[0]
-    r.kpC = variables[1]
-    
-    endtime = 50
-    numberofpoints = 100
+    r.KmACgA = variables[0]
+    r.KmBCgB = variables[1]
+    r.KmCCgC = variables[2]
+    r.kpB = variables[3]
+    r.kpC = variables[4]
+    r.dB = variables[5]
+    r.dC = variables[6]
+    r.theta1 = variables[7]
+    r.theta3 = variables[8]
+    r.theta4 = variables[9]
+    r.theta5 = variables[10]
+    endtime = 300
+    numberofpoints = 300
     
     result = r.simulate(0, endtime, numberofpoints,['time', 'x8','x9','x10'])
     #r.plot(result)

@@ -162,13 +162,66 @@ def differential_evolution(config):
             quadratic = quadratic + (normalised_distance)**2
         norm[solution] = math.sqrt(quadratic)
     
+    idx_min_norm = np.argmin(norm)
+    #cluster_threshold = np.zeros((Nobj))
+    
+    #the cluster threshold is the objective value of the solution
+    #closest to the ideal solution
+    cluster_objective = 0
+    cluster_threshold = PFront[idx_min_norm,cluster_objective]
+    
+    #set up 2 clusters
+    cluster_2= np.zeros(len(PFront))
+    cluster_1= np.zeros(len(PFront))
+    
+    k = 0
+    m = 0
+    #write down which indices of PFront (and PSet) belong to which cluster
+    for solution_index in range(0,len(PFront)):
+        if PFront[solution_index,cluster_objective] > cluster_threshold:
+            cluster_2[k]= solution_index #bad first objective value so goes to cluster 2
+            k = k+1
+        else:
+            cluster_1[m] = solution_index
+            m = m+1
+    
+    cluster_2 = cluster_2[:k]
+    cluster_1 = cluster_1[:m]
+    
+    print(cluster_2)
+    print(cluster_1)
+    
+    values_cluster_2 = PFront[cluster_2.astype(int)]
+    values_cluster_1 = PFront[cluster_1.astype(int)]
+    norm_cluster_2 = norm[cluster_2.astype(int)]
+    norm_cluster_1 = norm[cluster_1.astype(int)]
+    
+    
+    parameters_cluster_2 = PSet[cluster_2.astype(int)]
+    parameters_cluster_1 = PSet[cluster_1.astype(int)]
+    
+    array1 = np.full(len(cluster_1),1)
+    array2 = np.full(len(cluster_2),2)
+    
     for plotted_objective in range(0,Nobj):
         plt.figure()
-        plt.scatter(PFront[:,plotted_objective], norm)
+        plt.scatter(values_cluster_2[:,plotted_objective], norm_cluster_2)
+        plt.scatter(values_cluster_1[:,plotted_objective], norm_cluster_1, color = 'red')
         plt.xlabel(r'$J_{}$'.format(plotted_objective+1)+r'$(\theta$)')
         plt.ylabel(r'$||\hat{J}(\theta)||$')
         plt.savefig('Level_diagram_J'+str(plotted_objective+1)+ '.pdf')    
         plt.show()
+        
+    for plotted_parameter in range(0,Nvar):
+        plt.figure()
+        plt.scatter(parameters_cluster_2[:,plotted_parameter], array2)
+        plt.scatter(parameters_cluster_1[:,plotted_parameter], array1, color = 'red')
+        plt.xlabel(r'$P_{}$'.format(plotted_parameter))
+        plt.ylabel('cluster')
+        plt.savefig('Level_diagram_P'+str(plotted_parameter)+ '.pdf')    
+        plt.show()
+        
+   
     
     plt.figure
     plt.scatter(PFront[:,0],PFront[:,1])

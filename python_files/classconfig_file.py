@@ -9,11 +9,12 @@ from IFFL_file import IFFL
 
 class config:
     NOBJ = 2
-    NVAR = 2
-    MAXGEN = 700
+    NVAR = 11
+    MAXGEN = 20
     
     #optimization_bounds = [(1, 200), (1, 15)]
-    optimization_bounds = [[1, 200], [1, 15]]
+    optimization_bounds = [[1, 200],[1, 200],[1, 200], [1, 100],[1, 100],\
+                           [0.01,0.3],[0.01,0.3],[50,200],[0.0001,0.5],[0.0005,5],[1,100]]
     initial_bounds = optimization_bounds
     def cost_function(f):
         return IFFL(f)
@@ -21,7 +22,7 @@ class config:
     
     
     
-    Xpop = 4*NVAR
+    Xpop = 10*NVAR
     subXpop = 2*NVAR
     scaling_factor = 0.5
     CR_rate = 0.9
