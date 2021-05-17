@@ -139,6 +139,9 @@ Vfactor = (Vcell*Ncells/Vculture)
 
     J1 = 2*result[0,2]/(result[-1,3]-result[0,3])
     J2 = (result[-1,1]-result[0,1]/result[0,2])
+    
+    
+    
     #print(J1,J2)
     r.reset()
     return(J1,J2)

@@ -6,11 +6,12 @@ Created on Wed Apr 21 11:43:29 2021
 """
 
 from IFFL_file import IFFL
+import numpy as np 
 
 class config:
     NOBJ = 2
     NVAR = 11
-    MAXGEN = 20
+    MAXGEN = 300
     
     #optimization_bounds = [(1, 200), (1, 15)]
     optimization_bounds = [[1, 200],[1, 200],[1, 200], [1, 100],[1, 100],\
@@ -22,12 +23,16 @@ class config:
     
     
     
-    Xpop = 10*NVAR
+    Xpop = 30*NVAR
     subXpop = 2*NVAR
     scaling_factor = 0.5
     CR_rate = 0.9
     
     stop_size = 1500
+    
+    pertinency_bounds =np.array([[0, 2000],[0, 200]])
+    #pertinency_bounds =np.array([])
+    
     
 
 #print(config.optimization_bounds[1][1])
